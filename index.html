@@ -2,26 +2,24 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Mega Questões - Estudo Inteligente</title>
+    <title>Mega Questões Pro - Estudo Inteligente</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
-        :root { --primary: #1e3a8a; --accent: #2563eb; --success: #16a34a; --error: #dc2626; --bg: #f8fafc; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 0; }
+        :root { --primary: #1e3a8a; --accent: #2563eb; --bg: #f8fafc; --text: #1e293b; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; }
         header { background: var(--primary); color: white; padding: 20px; text-align: center; font-size: 24px; font-weight: bold; }
         nav { display: flex; justify-content: center; background: #0f172a; position: sticky; top: 0; z-index: 100; }
         nav button { padding: 15px 25px; background: none; border: none; color: white; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        nav button:hover { background: var(--accent); }
-        .section { display: none; padding: 20px; max-width: 800px; margin: auto; }
-        .active { display: block; }
+        nav button.active { border-bottom: 3px solid white; background: rgba(255,255,255,0.1); }
+        .section { display: none; padding: 20px; max-width: 850px; margin: auto; }
+        .active-section { display: block; }
         .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; border-top: 5px solid var(--accent); }
-        button { padding: 12px 20px; cursor: pointer; border: none; border-radius: 8px; background: var(--accent); color: white; font-weight: bold; margin: 5px; }
-        .btn-danger { background: var(--error); }
-        .option { margin: 10px 0; padding: 15px; background: #f9fafb; border-radius: 8px; cursor: pointer; border: 2px solid #e5e7eb; transition: 0.2s; }
-        .option:hover { border-color: var(--accent); background: #eff6ff; }
+        button.main-btn { padding: 12px 24px; cursor: pointer; border: none; border-radius: 8px; background: var(--accent); color: white; font-weight: bold; }
+        .option { margin: 10px 0; padding: 15px; background: #f1f5f9; border-radius: 8px; cursor: pointer; border: 2px solid #e2e8f0; transition: 0.2s; }
         .correct { background: #dcfce7 !important; border-color: #22c55e !important; color: #166534; }
         .wrong { background: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b; }
-        #loading { display: none; text-align: center; font-weight: bold; color: var(--accent); padding: 20px; }
-        .resumo-item { background: #fff7ed; padding: 15px; border-radius: 8px; border-left: 5px solid #f97316; margin-bottom: 10px; font-size: 14px; }
+        #loading { display: none; text-align: center; color: var(--accent); font-weight: bold; padding: 20px; }
+        .resumo-item { background: #fff7ed; padding: 15px; border-radius: 8px; border-left: 5px solid #f97316; margin-bottom: 10px; font-size: 14px; line-height: 1.5; }
     </style>
 </head>
 <body>
@@ -29,134 +27,156 @@
 <header>Mega Questões - Inteligência nos Estudos</header>
 
 <nav>
-    <button onclick="aba('questoes')">Questões</button>
-    <button onclick="aba('upload')">Importar PDF</button>
-    <button onclick="aba('feedback')">Feedback & Resumo</button>
+    <button id="nav-q" class="active" onclick="irPara('questoes')">Questões</button>
+    <button id="nav-u" onclick="irPara('upload')">Importar PDF</button>
+    <button id="nav-f" onclick="irPara('feedback')">Feedback & Resumo</button>
 </nav>
 
-<div id="questoes" class="section active">
+<div id="questoes" class="section active-section">
     <div class="card">
-        <h3 id="qTitle">Caderno de Questões</h3>
-        <div id="qText">Vá em "Importar PDF" para começar seu estudo.</div>
-        <div id="qOptions"></div>
-        <div id="qExp" style="margin-top:20px; font-weight:500; color: var(--primary);"></div>
+        <h3 id="titulo-q">Caderno de Exercícios</h3>
+        <div id="texto-q">Para começar, vá na aba "Importar PDF" e envie seu material de estudo.</div>
+        <div id="opcoes-q"></div>
+        <div id="exp-q" style="margin-top:20px; font-style: italic; color: var(--primary);"></div>
     </div>
 </div>
 
 <div id="upload" class="section">
     <div class="card">
-        <h3>🚀 Gerar Questões do PDF</h3>
-        <p>A IA analisará o texto e criará questões estilo banca para você.</p>
-        <input type="file" id="fPdf" accept="application/pdf" style="display:block; margin: 20px 0;">
-        <button onclick="processar()">Analisar e Criar Agora</button>
-        <div id="loading">⏳ IA Analisando conteúdo... Aguarde.</div>
+        <h3>🚀 Gerar Questões Inéditas</h3>
+        <p>A IA analisará o texto do seu PDF e criará questões estilo banca focadas no aprendizado.</p>
+        <input type="file" id="arquivo-pdf" accept="application/pdf" style="margin: 20px 0; display: block;">
+        <button class="main-btn" onclick="iniciarProcessamento()">Analisar e Criar Agora</button>
+        <div id="loading">⏳ IA conectando aos servidores do Google... Aguarde.</div>
     </div>
 </div>
 
 <div id="feedback" class="section">
     <div class="card">
-        <h3>📊 Seu Desempenho</h3>
-        <div id="stats">Nenhum dado registrado.</div>
-        <div style="margin-top:20px;">
-            <button onclick="atualizarFeedback()">🔄 Atualizar</button>
-            <button onclick="salvarTXt()" style="background:#16a34a">💾 Salvar Resumo</button>
-            <button class="btn-danger" onclick="limpar()">🗑️ Resetar Tudo</button>
+        <h3>📊 Meu Momento Feedback</h3>
+        <div id="estatisticas">Ainda não há dados de progresso.</div>
+        <hr>
+        <h4>📝 Resumo Estruturado (O que eu preciso gravar):</h4>
+        <div id="lista-resumo">Os pontos que você errar aparecerão aqui detalhados.</div>
+        <div style="margin-top: 20px;">
+            <button onclick="salvarResumo()" style="background:#16a34a; color:white; border:none; padding:10px; border-radius:5px; cursor:pointer;">💾 Salvar Resumo em Texto</button>
+            <button onclick="limparTudo()" style="background:#dc2626; color:white; border:none; padding:10px; border-radius:5px; cursor:pointer;">🗑️ Limpar Tudo</button>
         </div>
     </div>
 </div>
 
 <script>
-const KEY = "AIzaSyB14BAB9dfBzwTWRrmLITygiVJhbbJH3A0";
+const MINHA_CHAVE = "AIzaSyB14BAB9dfBzwTWRrmLITygiVJhbbJH3A0";
 const pdfjs = window['pdfjs-dist/build/pdf'];
 pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-let stats = JSON.parse(localStorage.getItem("mega_stats")) || { total:0, ok:0, erro:0, resumo: [] };
-let banco = [];
+let stats = JSON.parse(localStorage.getItem("mega_v3_stats")) || { total:0, acertos:0, erros:0, historico: [] };
+let bancoQuestoes = [];
 
-function aba(id){
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+function irPara(id){
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active-section');
+    if(id === 'feedback') montarFeedback();
 }
 
-async function processar() {
-    const file = document.getElementById('fPdf').files[0];
+async function iniciarProcessamento() {
+    const file = document.getElementById('arquivo-pdf').files[0];
     if(!file) return alert("Selecione um PDF.");
     document.getElementById('loading').style.display = 'block';
 
     try {
         const ab = await file.arrayBuffer();
         const doc = await pdfjs.getDocument({data: ab}).promise;
-        let txt = "";
+        let textoExtraido = "";
         for(let i=1; i<=Math.min(doc.numPages, 2); i++) {
             const pg = await doc.getPage(i);
             const ct = await pg.getTextContent();
-            txt += ct.items.map(s => s.str).join(" ");
+            textoExtraido += ct.items.map(s => s.str).join(" ");
         }
 
-        const prompt = `Atue como banca. Com base no texto, crie 3 questões A-E. Responda APENAS JSON: [{"p":"pergunta","opts":["A","B","C","D","E"],"c":0,"exp":"explicação"}]. Texto: ${txt.substring(0, 3000)}`;
+        const prompt = `Crie 3 questões de múltipla escolha (A-E) sobre este conteúdo. Responda APENAS JSON: [{"p":"pergunta","opts":["A","B","C","D","E"],"c":0,"exp":"explicação do erro"}]. Texto: ${textoExtraido.substring(0, 3000)}`;
 
-        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${KEY}`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-        });
+        // ESTRATÉGIA DE MULTI-MODELO (Se um falhar, tenta o outro)
+        const modelos = ["gemini-1.5-flash", "gemini-pro", "gemini-1.5-flash-latest"];
+        let sucesso = false;
+        let resultadoData;
 
-        const d = await r.json();
-        const json = JSON.parse(d.candidates[0].content.parts[0].text.replace(/```json|```/g, "").trim());
-        banco = json;
+        for(let mod de modelos) {
+            if(sucesso) break;
+            try {
+                const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${mod}:generateContent?key=${MINHA_CHAVE}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                resultadoData = await r.json();
+                if(!resultadoData.error) { sucesso = true; break; }
+            } catch(e) { console.log("Tentando próximo modelo..."); }
+        }
+
+        if(!sucesso) throw new Error(resultadoData.error.message);
+
+        const textoLimpo = resultadoData.candidates[0].content.parts[0].text.replace(/```json|```/g, "").trim();
+        bancoQuestoes = JSON.parse(textoLimpo);
+        
         document.getElementById('loading').style.display = 'none';
-        aba('questoes');
-        showQ(0);
+        irPara('questoes');
+        renderizarQuestao(0);
     } catch (e) {
-        alert("Erro: Verifique se o PDF tem texto ou se a chave API está ativa.");
+        alert("Erro de Conexão Google: " + e.message);
         document.getElementById('loading').style.display = 'none';
     }
 }
 
-function showQ(idx) {
-    if(!banco[idx]) return;
-    const q = banco[idx];
-    document.getElementById('qTitle').innerText = `Questão ${idx+1}`;
-    document.getElementById('qText').innerHTML = q.p;
-    document.getElementById('qExp').innerText = "";
+function renderizarQuestao(idx) {
+    if(!bancoQuestoes[idx]) return;
+    const q = bancoQuestoes[idx];
+    document.getElementById('titulo-q').innerText = `Questão ${idx+1} de ${bancoQuestoes.length}`;
+    document.getElementById('texto-q').innerHTML = q.p;
+    document.getElementById('exp-q').innerText = "";
     let html = "";
     q.opts.forEach((o, i) => {
-        html += `<div class="option" onclick="validar(this, ${i}, ${q.c}, '${q.exp.replace(/'/g, "")}')">${o}</div>`;
+        html += `<div class="option" onclick="verificar(this, ${i}, ${q.c}, '${q.exp.replace(/'/g, "")}')">${o}</div>`;
     });
-    if(idx < banco.length - 1) html += `<button onclick="showQ(${idx+1})">Próxima ➔</button>`;
-    document.getElementById('qOptions').innerHTML = html;
+    if(idx < bancoQuestoes.length - 1) html += `<button class="main-btn" onclick="renderizarQuestao(${idx+1})">Próxima Questão ➔</button>`;
+    document.getElementById('opcoes-q').innerHTML = html;
 }
 
-function validar(el, sel, cor, exp) {
-    if(el.parentElement.classList.contains('locked')) return;
+function verificar(el, sel, cor, exp) {
+    if(el.parentElement.classList.contains('travado')) return;
     stats.total++;
-    if(sel === cor) { el.classList.add('correct'); stats.ok++; }
+    if(sel === cor) { el.classList.add('correct'); stats.acertos++; }
     else { 
-        el.classList.add('wrong'); stats.erro++; 
-        stats.resumo.push({ data: new Date().toLocaleDateString(), info: exp });
+        el.classList.add('wrong'); stats.erros++; 
+        stats.historico.push({ data: new Date().toLocaleDateString(), resumo: exp });
     }
-    document.getElementById('qExp').innerHTML = "<strong>💡 Explicação:</strong> " + exp;
-    el.parentElement.classList.add('locked');
-    localStorage.setItem("mega_stats", JSON.stringify(stats));
+    document.getElementById('exp-q').innerHTML = "<strong>💡 Explicação Pedagógica:</strong><br>" + exp;
+    el.parentElement.classList.add('travado');
+    localStorage.setItem("mega_v3_stats", JSON.stringify(stats));
 }
 
-function atualizarFeedback() {
-    let perc = stats.total > 0 ? ((stats.ok / stats.total) * 100).toFixed(1) : 0;
-    let html = `<h4>Aproveitamento: ${perc}%</h4><p>Total: ${stats.total} | Acertos: ${stats.ok} | Erros: ${stats.erro}</p><hr><strong>Resumo de Aprendizagem:</strong>`;
-    html += stats.resumo.slice(-10).map(e => `<div class="resumo-item"><b>[${e.data}]</b> ${e.info}</div>`).join("");
-    document.getElementById('stats').innerHTML = html;
+function montarFeedback() {
+    let perc = stats.total > 0 ? ((stats.acertos / stats.total) * 100).toFixed(1) : 0;
+    document.getElementById('estatisticas').innerHTML = `
+        <p>Aproveitamento: <strong>${perc}%</strong></p>
+        <p>Total: ${stats.total} | Acertos: ${stats.acertos} | Erros: ${stats.erros}</p>
+    `;
+    document.getElementById('lista-resumo').innerHTML = stats.historico.slice(-8).map(h => `
+        <div class="resumo-item"><b>[${h.data}]</b> ${h.resumo}</div>
+    `).join("");
 }
 
-function salvarTXt() {
-    const texto = "RESUMO DE ESTUDOS\n\n" + stats.resumo.map(e => `[${e.data}] ${e.info}`).join("\n\n");
+function salvarResumo() {
+    const texto = "MEU RESUMO DE ESTUDOS\n\n" + stats.historico.map(h => `[${h.data}] ${h.resumo}`).join("\n\n");
     const blob = new Blob([texto], {type: "text/plain"});
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "meu_resumo.txt";
+    a.download = "resumo_estudo.txt";
     a.click();
 }
 
-function limpar() { if(confirm("Zerar tudo?")) { localStorage.clear(); location.reload(); } }
+function limparTudo() { if(confirm("Deseja apagar seu histórico?")) { localStorage.clear(); location.reload(); } }
 </script>
 </body>
 </html>
