@@ -2,27 +2,26 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Mega Questões - Estudo Online</title>
+    <title>Mega Questões - Estudo Inteligente</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
-        body{ font-family: 'Segoe UI', sans-serif; background:#f0f2f5; margin:0; padding:0; }
-        header{ background:#1e3a8a; color:white; padding:20px; text-align:center; font-size:24px; font-weight:bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        nav{ display:flex; justify-content:center; background:#0f172a; position: sticky; top: 0; z-index: 100; }
-        nav button{ padding:15px 25px; background:none; border:none; color:white; cursor:pointer; font-weight:bold; transition: 0.3s; }
-        nav button:hover{ background:#2563eb; }
-        .section{ display:none; padding:20px; max-width: 900px; margin: auto; }
-        .active{ display:block; }
-        .card{ background:white; padding:25px; border-radius:12px; box-shadow:0 4px 6px rgba(0,0,0,0.05); margin-bottom:20px; }
-        button{ padding:12px 20px; cursor:pointer; border:none; border-radius:8px; background:#2563eb; color:white; font-weight: bold; margin-right: 10px; }
-        button:hover{ opacity: 0.9; }
-        .btn-danger { background: #dc2626; }
-        .btn-save { background: #16a34a; }
-        .option{ margin:10px 0; padding:15px; background:#f9fafb; border-radius:8px; cursor:pointer; border: 2px solid #e5e7eb; transition: 0.2s; }
-        .option:hover{ border-color: #2563eb; background:#eff6ff; }
-        .correct{ background:#dcfce7 !important; border-color:#22c55e !important; color: #166534; }
-        .wrong{ background:#fee2e2 !important; border-color:#ef4444 !important; color: #991b1b; }
-        #loading{ display:none; color:#2563eb; font-weight:bold; text-align: center; padding: 20px; }
-        .resumo-item { background: #fff7ed; padding: 15px; border-radius: 8px; border-left: 5px solid #f97316; margin-bottom: 10px; }
+        :root { --primary: #1e3a8a; --accent: #2563eb; --success: #16a34a; --error: #dc2626; --bg: #f8fafc; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 0; }
+        header { background: var(--primary); color: white; padding: 20px; text-align: center; font-size: 24px; font-weight: bold; }
+        nav { display: flex; justify-content: center; background: #0f172a; position: sticky; top: 0; z-index: 100; }
+        nav button { padding: 15px 25px; background: none; border: none; color: white; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        nav button:hover { background: var(--accent); }
+        .section { display: none; padding: 20px; max-width: 800px; margin: auto; }
+        .active { display: block; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; border-top: 5px solid var(--accent); }
+        button { padding: 12px 20px; cursor: pointer; border: none; border-radius: 8px; background: var(--accent); color: white; font-weight: bold; margin: 5px; }
+        .btn-danger { background: var(--error); }
+        .option { margin: 10px 0; padding: 15px; background: #f9fafb; border-radius: 8px; cursor: pointer; border: 2px solid #e5e7eb; transition: 0.2s; }
+        .option:hover { border-color: var(--accent); background: #eff6ff; }
+        .correct { background: #dcfce7 !important; border-color: #22c55e !important; color: #166534; }
+        .wrong { background: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b; }
+        #loading { display: none; text-align: center; font-weight: bold; color: var(--accent); padding: 20px; }
+        .resumo-item { background: #fff7ed; padding: 15px; border-radius: 8px; border-left: 5px solid #f97316; margin-bottom: 10px; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -30,178 +29,134 @@
 <header>Mega Questões - Inteligência nos Estudos</header>
 
 <nav>
-    <button onclick="showSection('questoes')">Praticar</button>
-    <button onclick="showSection('upload')">Importar PDF</button>
-    <button onclick="showSection('feedback')">Feedback & Resumo</button>
+    <button onclick="aba('questoes')">Questões</button>
+    <button onclick="aba('upload')">Importar PDF</button>
+    <button onclick="aba('feedback')">Feedback & Resumo</button>
 </nav>
 
 <div id="questoes" class="section active">
     <div class="card">
-        <h3 id="questionTitle">Questão</h3>
-        <div id="questionText">Seu caderno de questões está vazio. Vá em "Importar PDF" para começar.</div>
-        <div id="options"></div>
-        <div id="explanation" style="margin-top:20px; font-weight:500; color: #1e3a8a;"></div>
+        <h3 id="qTitle">Caderno de Questões</h3>
+        <div id="qText">Vá em "Importar PDF" para começar seu estudo.</div>
+        <div id="qOptions"></div>
+        <div id="qExp" style="margin-top:20px; font-weight:500; color: var(--primary);"></div>
     </div>
 </div>
 
 <div id="upload" class="section">
     <div class="card">
-        <h3>🚀 Gerar Novas Questões</h3>
-        <p>Escolha um PDF e nossa IA criará questões inéditas focadas no conteúdo.</p>
-        <input type="file" id="pdfFile" accept="application/pdf" style="margin: 20px 0;">
-        <br>
-        <button onclick="processarPDF()">Analisar PDF Agora</button>
-        <div id="loading">⏳ Processando conteúdo... Pode levar alguns segundos.</div>
+        <h3>🚀 Gerar Questões do PDF</h3>
+        <p>A IA analisará o texto e criará questões estilo banca para você.</p>
+        <input type="file" id="fPdf" accept="application/pdf" style="display:block; margin: 20px 0;">
+        <button onclick="processar()">Analisar e Criar Agora</button>
+        <div id="loading">⏳ IA Analisando conteúdo... Aguarde.</div>
     </div>
 </div>
 
 <div id="feedback" class="section">
     <div class="card">
-        <h3>📊 Seu Desempenho Acumulado</h3>
-        <div id="feedbackContent">Nenhum dado registrado.</div>
-        <div style="margin-top: 20px;">
-            <button onclick="generateFeedback()">🔄 Atualizar</button>
-            <button class="btn-save" onclick="salvarFeedback()">💾 Salvar Resumo (.txt)</button>
-            <button class="btn-danger" onclick="limparTudo()">🗑️ Resetar Tudo</button>
+        <h3>📊 Seu Desempenho</h3>
+        <div id="stats">Nenhum dado registrado.</div>
+        <div style="margin-top:20px;">
+            <button onclick="atualizarFeedback()">🔄 Atualizar</button>
+            <button onclick="salvarTXt()" style="background:#16a34a">💾 Salvar Resumo</button>
+            <button class="btn-danger" onclick="limpar()">🗑️ Resetar Tudo</button>
         </div>
     </div>
 </div>
 
 <script>
-// CONFIGURAÇÕES DA IA
-const API_KEY = "AIzaSyB14BAB9dfBzwTWRrmLITygiVJhbbJH3A0";
-const MODEL_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+const KEY = "AIzaSyB14BAB9dfBzwTWRrmLITygiVJhbbJH3A0";
+const pdfjs = window['pdfjs-dist/build/pdf'];
+pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-// BIBLIOTECA PDF
-const pdfjsLib = window['pdfjs-dist/build/pdf'];
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+let stats = JSON.parse(localStorage.getItem("mega_stats")) || { total:0, ok:0, erro:0, resumo: [] };
+let banco = [];
 
-// ESTADO DO APP
-let stats = JSON.parse(localStorage.getItem("estudos_stats")) || { total:0, correct:0, wrong:0, historico_erros: [] };
-let bancoQuestoes = [];
-
-function showSection(id){
-    document.querySelectorAll('.section').forEach(sec=>sec.classList.remove('active'));
+function aba(id){
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
 }
 
-async function processarPDF() {
-    const file = document.getElementById('pdfFile').files[0];
-    if (!file) return alert("Por favor, selecione um arquivo PDF.");
-    
+async function processar() {
+    const file = document.getElementById('fPdf').files[0];
+    if(!file) return alert("Selecione um PDF.");
     document.getElementById('loading').style.display = 'block';
 
     try {
-        const arrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
-        let textoParaIA = "";
-        
-        // Extrai texto das 2 primeiras páginas
-        for (let i = 1; i <= Math.min(pdf.numPages, 2); i++) {
-            const page = await pdf.getPage(i);
-            const content = await page.getTextContent();
-            textoParaIA += content.items.map(s => s.str).join(" ");
+        const ab = await file.arrayBuffer();
+        const doc = await pdfjs.getDocument({data: ab}).promise;
+        let txt = "";
+        for(let i=1; i<=Math.min(doc.numPages, 2); i++) {
+            const pg = await doc.getPage(i);
+            const ct = await pg.getTextContent();
+            txt += ct.items.map(s => s.str).join(" ");
         }
 
-        const prompt = `Atue como banca examinadora. Baseado no texto abaixo, crie 3 questões de múltipla escolha (A-E) inéditas. Responda APENAS o JSON puro: [{"p":"pergunta","opts":["A","B","C","D","E"],"c":0,"exp":"explicação detalhada"}]. Texto: ${textoParaIA.substring(0, 3500)}`;
+        const prompt = `Atue como banca. Com base no texto, crie 3 questões A-E. Responda APENAS JSON: [{"p":"pergunta","opts":["A","B","C","D","E"],"c":0,"exp":"explicação"}]. Texto: ${txt.substring(0, 3000)}`;
 
-        const response = await fetch(`${MODEL_URL}?key=${API_KEY}`, {
+        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${KEY}`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
         });
 
-        const data = await response.json();
-        const rawJson = data.candidates[0].content.parts[0].text.replace(/```json|```/g, "").trim();
-        bancoQuestoes = JSON.parse(rawJson);
-        
+        const d = await r.json();
+        const json = JSON.parse(d.candidates[0].content.parts[0].text.replace(/```json|```/g, "").trim());
+        banco = json;
         document.getElementById('loading').style.display = 'none';
-        showSection('questoes');
-        exibirQuestao(0);
+        aba('questoes');
+        showQ(0);
     } catch (e) {
-        alert("Erro ao conectar com a IA. Tente novamente ou use outro PDF.");
+        alert("Erro: Verifique se o PDF tem texto ou se a chave API está ativa.");
         document.getElementById('loading').style.display = 'none';
     }
 }
 
-function exibirQuestao(index) {
-    if (!bancoQuestoes[index]) return;
-    const q = bancoQuestoes[index];
-    document.getElementById("questionTitle").innerText = `Questão ${index + 1} de ${bancoQuestoes.length}`;
-    document.getElementById("questionText").innerHTML = q.p;
-    document.getElementById("explanation").innerHTML = "";
-    
+function showQ(idx) {
+    if(!banco[idx]) return;
+    const q = banco[idx];
+    document.getElementById('qTitle').innerText = `Questão ${idx+1}`;
+    document.getElementById('qText').innerHTML = q.p;
+    document.getElementById('qExp').innerText = "";
     let html = "";
-    q.opts.forEach((opt, i) => {
-        html += `<div class="option" onclick="validarResposta(this, ${i}, ${q.c}, '${q.exp.replace(/'/g, "\\'")}')">${opt}</div>`;
+    q.opts.forEach((o, i) => {
+        html += `<div class="option" onclick="validar(this, ${i}, ${q.c}, '${q.exp.replace(/'/g, "")}')">${o}</div>`;
     });
-    
-    if (index < bancoQuestoes.length - 1) {
-        html += `<button style="margin-top:20px" onclick="exibirQuestao(${index + 1})">Próxima Questão ➔</button>`;
-    }
-    document.getElementById("options").innerHTML = html;
+    if(idx < banco.length - 1) html += `<button onclick="showQ(${idx+1})">Próxima ➔</button>`;
+    document.getElementById('qOptions').innerHTML = html;
 }
 
-function validarResposta(el, selected, correct, exp) {
-    if (el.parentElement.classList.contains('travada')) return;
-    
+function validar(el, sel, cor, exp) {
+    if(el.parentElement.classList.contains('locked')) return;
     stats.total++;
-    if (selected === correct) {
-        el.classList.add('correct');
-        stats.correct++;
-    } else {
-        el.classList.add('wrong');
-        stats.wrong++;
-        // Salva erro no histórico para feedback estruturado
-        stats.historico_erros.push({ data: new Date().toLocaleDateString(), resumo: exp });
+    if(sel === cor) { el.classList.add('correct'); stats.ok++; }
+    else { 
+        el.classList.add('wrong'); stats.erro++; 
+        stats.resumo.push({ data: new Date().toLocaleDateString(), info: exp });
     }
-    
-    document.getElementById("explanation").innerHTML = "<strong>💡 Por que esta resposta?</strong><br>" + exp;
-    el.parentElement.classList.add('travada');
-    localStorage.setItem("estudos_stats", JSON.stringify(stats));
+    document.getElementById('qExp').innerHTML = "<strong>💡 Explicação:</strong> " + exp;
+    el.parentElement.classList.add('locked');
+    localStorage.setItem("mega_stats", JSON.stringify(stats));
 }
 
-function generateFeedback() {
-    let taxa = stats.total > 0 ? ((stats.correct / stats.total) * 100).toFixed(1) : 0;
-    let html = `
-        <div style="font-size: 1.2em; margin-bottom: 20px;">
-            Aproveitamento: <strong>${taxa}%</strong> | 
-            Respondidas: <strong>${stats.total}</strong> | 
-            Acertos: <span style="color:green">${stats.correct}</span> | 
-            Erros: <span style="color:red">${stats.wrong}</span>
-        </div>
-        <h4>📝 Resumo de Aprendizagem (Pontos Chave):</h4>`;
-    
-    if (stats.historico_erros.length === 0) {
-        html += "<p>Você ainda não tem erros registrados. Continue praticando!</p>";
-    } else {
-        html += "<div>" + stats.historico_erros.slice(-10).map(e => `
-            <div class="resumo-item">
-                <small>${e.data}</small><br>${e.resumo}
-            </div>`).join("") + "</div>";
-    }
-    document.getElementById("feedbackContent").innerHTML = html;
+function atualizarFeedback() {
+    let perc = stats.total > 0 ? ((stats.ok / stats.total) * 100).toFixed(1) : 0;
+    let html = `<h4>Aproveitamento: ${perc}%</h4><p>Total: ${stats.total} | Acertos: ${stats.ok} | Erros: ${stats.erro}</p><hr><strong>Resumo de Aprendizagem:</strong>`;
+    html += stats.resumo.slice(-10).map(e => `<div class="resumo-item"><b>[${e.data}]</b> ${e.info}</div>`).join("");
+    document.getElementById('stats').innerHTML = html;
 }
 
-function salvarFeedback() {
-    if (stats.historico_erros.length === 0) return alert("Sem dados para salvar.");
-    const texto = "MEU RESUMO DE ESTUDOS - MEGA QUESTÕES\n\n" + 
-                stats.historico_erros.map(e => `[${e.data}] ${e.resumo}`).join("\n\n");
-    const blob = new Blob([texto], { type: "text/plain" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "resumo_estudo.txt";
-    link.click();
+function salvarTXt() {
+    const texto = "RESUMO DE ESTUDOS\n\n" + stats.resumo.map(e => `[${e.data}] ${e.info}`).join("\n\n");
+    const blob = new Blob([texto], {type: "text/plain"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "meu_resumo.txt";
+    a.click();
 }
 
-function limparTudo() {
-    if (confirm("Isso apagará todo o seu histórico e resumo. Tem certeza?")) {
-        stats = { total:0, correct:0, wrong:0, historico_erros: [] };
-        localStorage.clear();
-        location.reload();
-    }
-}
+function limpar() { if(confirm("Zerar tudo?")) { localStorage.clear(); location.reload(); } }
 </script>
 </body>
-
 </html>
